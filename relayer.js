@@ -79,3 +79,5 @@ async function relayer() {
         }
     });
 }
+
+relayer();
