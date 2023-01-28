@@ -54,12 +54,50 @@ async function relayer() {
 
     console.log("Contract connection has been established");
 
-    const order_send_token_fvm = () => {
+    const order_send_token_fvm = async (token, bridger, value) => {
+        try {
+            console.log("Commanding send from FVM vault to " + bridger);
 
+            // estimating gas 
+            let gas_limit = await fvmVault.estimateGas.transfer(token, bridger, value, {
+                from: FVM_SIGNER.address
+            });
+
+            let tx = await fvmVault.transfer(token, bridger, value, {
+                from: FVM_SIGNER.address,
+                gasLimit: gas_limit.toString()
+            })
+
+            await tx.wait();
+
+            console.log("Token has been sent");
+            
+        } catch (err) {
+            console.log("Error", err);
+        }
     }
 
-    const order_send_token_bsc = () => {
+    const order_send_token_bsc = async (token, bridger, value) => {
+        try {
+            console.log("Commanding send from BSC vault to " + bridger);
 
+            // estimating gas 
+            let gas_limit = await bscVault.estimateGas.transfer(token, bridger, value, {
+                from: BSC_SIGNER.address
+            });
+
+            let tx = await bscVault.transfer(token, bridger, value, {
+                from: BSC_SIGNER.address,
+                gasLimit: gas_limit.toString()
+            })
+
+            await tx.wait();
+
+            console.log("Token has been sent");
+            
+        } catch (err) {
+            console.log("Error", err);
+        }
     }
 
 
@@ -67,7 +105,7 @@ async function relayer() {
         try {
             order_send_token_bsc(token. bridger, value)
         } catch (err) {
-            console.log("An Error Occurred while transferring token, chat with admin")
+            console.log("An Error Occurred while transferring token, chat with admin", err)
         }
     });
 
@@ -75,7 +113,7 @@ async function relayer() {
         try {
             order_send_token_fvm(token. bridger, value)
         } catch (err) {
-            console.log("An Error Occurred while transferring token, chat with admin")
+            console.log("An Error Occurred while transferring token, chat with admin", err)
         }
     });
 }
