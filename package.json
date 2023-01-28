@@ -1,0 +1,11 @@
+{
+  "name": "foo-bridge-node",
+  "version": "1.0.0",
+  "description": "This is the node js server/bot/router/relayer for the foo bridge ",
+  "main": "index.js",
+  "author": "developeruche",
+  "license": "MIT",
+  "dependencies": {
+    "ethers": "^5.7.2"
+  }
+}
