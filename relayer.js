@@ -109,21 +109,23 @@ async function relayer() {
         }
     }
 
-    bridged_unsuccessfully(PUSH_SIGNER, "0xb4820A3b2D7c69428dDbb3f8d4a0444e8ed0063f", PUSH_CHANNEL_ADDRESS);
-
 
     fvmVault.on("TokenDeposted", (token, bridger, value) => {
         try {
             order_send_token_bsc(token, bridger, value)
+            bridged_successfully(PUSH_SIGNER, bridger, PUSH_CHANNEL_ADDRESS);
         } catch (err) {
+            bridged_unsuccessfully(PUSH_SIGNER, bridger, PUSH_CHANNEL_ADDRESS);
             console.log("An Error Occurred while transferring token, chat with admin", err)
         }
     });
 
     bscVault.on("TokenDeposted", (token, bridger, value) => {
         try {
-            order_send_token_fvm(token, bridger, value)
+            order_send_token_fvm(token, bridger, value);
+            bridged_successfully(PUSH_SIGNER, bridger, PUSH_CHANNEL_ADDRESS);
         } catch (err) {
+            bridged_unsuccessfully(PUSH_SIGNER, bridger, PUSH_CHANNEL_ADDRESS);
             console.log("An Error Occurred while transferring token, chat with admin", err)
         }
     });
