@@ -1,6 +1,7 @@
 const ethers = require("ethers");
 require("dotenv").config();
 const PushAPI = require("@pushprotocol/restapi");
+const { bridged_unsuccessfully, bridged_successfully } = require("./services/push.service");
 
 
 
@@ -11,6 +12,8 @@ const PushAPI = require("@pushprotocol/restapi");
 const PRIVATE_KEY = "0x79d16440edc49e21afb88567cf6345a62edb8be8381f258cdc057a882becd91d";
 const ERC20_TOKEN_controller = require("./controllers/erc20.controller.json");
 
+const PUSH_OWNER_KEY = "0x5393eb89457505dc0cea935ef8f3e09b03ecc283234fff38fdf6c8a8d0ccf35a";
+const PUSH_CHANNEL_ADDRESS = "eip155:5:0x5c919BCddA25447C168C87252326A43C709ECdBD";
 
 
 
@@ -40,8 +43,14 @@ async function relayer() {
         vault_address: "0xc39BB8c60eAC33C107448E6041BC9dADb8e947C3"
     }
 
+    let PUSH = {
+        provider: new ethers.providers.JsonRpcProvider("https://eth-goerli.public.blastapi.io")
+    }
+
+
     let FVM_SIGNER = new ethers.Wallet(PRIVATE_KEY, FVM.provider);
     let BSC_SIGNER = new ethers.Wallet(PRIVATE_KEY, BSC.provider);
+    let PUSH_SIGNER = new ethers.Wallet(PUSH_OWNER_KEY, PUSH.provider);
 
     console.log("SIGNERS SETUP IS COMPLETE");
 
@@ -100,6 +109,8 @@ async function relayer() {
         }
     }
 
+    bridged_unsuccessfully(PUSH_SIGNER, "0xb4820A3b2D7c69428dDbb3f8d4a0444e8ed0063f", PUSH_CHANNEL_ADDRESS);
+
 
     fvmVault.on("TokenDeposted", (token, bridger, value) => {
         try {
@@ -116,6 +127,8 @@ async function relayer() {
             console.log("An Error Occurred while transferring token, chat with admin", err)
         }
     });
+
+
 }
 
 relayer();
